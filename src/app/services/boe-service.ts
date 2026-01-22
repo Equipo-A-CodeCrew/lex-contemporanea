@@ -11,7 +11,7 @@ export class BoeService {
 
   constructor(private readonly http: HttpClient) { }
 
-  getSumario() {
-    return this.http.get(this.baseUrl);
+  getSumario(date: string) {
+    return this.http.get(`${this.baseUrl}${date}`);
   }
 }

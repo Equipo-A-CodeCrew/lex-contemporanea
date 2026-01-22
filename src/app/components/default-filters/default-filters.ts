@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { DefaultFiltersService } from '../../services/default-filters-service';
+import { BoeService } from '../../services/boe-service';
 
 @Component({
   selector: 'app-default-filters',
@@ -10,18 +11,30 @@ import { DefaultFiltersService } from '../../services/default-filters-service';
 })
 export class DefaultFilters {
 
-  // Simulación del sumario
-  sumarioMock = [
-    { tipo: 'Ley', titulo: 'Ley X' },
-    { tipo: 'Real Decreto', titulo: 'RD Y' },
-    { tipo: 'Ley', titulo: 'Ley Z' }
-  ];
+  sumario: any;
 
   constructor(
+    private readonly boeService: BoeService,
     private readonly filtersService: DefaultFiltersService
-  ) {}
+  ) { }
 
-  aplicarFiltro(): void {
-    this.filtersService.filterByLawType(this.sumarioMock, 'Ley');
+  ngOnInit(): void {
+    const today = new Date();
+    const date = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+
+    this.boeService.getSumario(date).subscribe(data => {
+      console.log('SUMARIO RAW', data);
+      this.sumario = data;
+    });
+  }
+
+  showEpigraphs(): void {
+    if (!this.sumario) return;
+    this.filtersService.extractEpigraphs(this.sumario);
+  }
+
+  showItems() {
+    if (!this.sumario) return;
+    this.filtersService.extractItems(this.sumario);
   }
 }
