@@ -1,0 +1,149 @@
+<!-- Test Component with Modern UI -->
+<div class="test-wrapper">
+  <div class="test-card">
+    <!-- Header -->
+    <div class="test-header">
+      <div class="test-header-content">
+        <h3 class="test-title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+          </svg>
+          Consulta API BOE
+        </h3>
+        <p class="test-description">Prueba la conexión con el sumario diario del Boletín Oficial del Estado</p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="test-form">
+      <div class="form-group">
+        <label for="dateInput" class="form-label">
+          Fecha de publicación
+          <span class="form-hint">(Formato: YYYYMMDD)</span>
+        </label>
+        <div class="input-group">
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="14" height="14" rx="2"/>
+            <path d="M3 8h14M7 2v4M13 2v4"/>
+          </svg>
+          <input 
+            id="dateInput"
+            type="text" 
+            [(ngModel)]="date" 
+            placeholder="20260120"
+            class="form-input"
+            maxlength="8"
+            [disabled]="cargando"
+          />
+        </div>
+        <p class="form-help">Introduce la fecha en formato AAAAMMDD. Hoy: {{ getToday() }}</p>
+      </div>
+
+      <button 
+        class="btn-primary btn-large" 
+        (click)="testBOE()"
+        [disabled]="cargando"
+      >
+        @if (!cargando) {
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/>
+          </svg>
+        }
+        @if (cargando) {
+          <span class="spinner"></span>
+        }
+        {{ cargando ? 'Consultando...' : 'Consultar sumario' }}
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    @if (cargando) {
+      <div class="loading-state">
+        <div class="loading-animation">
+          <div class="loading-dot"></div>
+          <div class="loading-dot"></div>
+          <div class="loading-dot"></div>
+        </div>
+        <p class="loading-text">Obteniendo datos del BOE...</p>
+      </div>
+    }
+
+    <!-- Results -->
+    @if (apiResult.state != State.Waiting && !cargando) {
+      <div class="test-results">
+        <!-- Success State -->
+        @if (apiResult.state == State.Ok) {
+          <div class="result-success">
+            <div class="result-header">
+              <div class="result-icon success">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div class="result-info">
+                <h4 class="result-title">{{ apiResult.name }}</h4>
+                <p class="result-status">Conexión exitosa</p>
+              </div>
+            </div>
+
+            <div class="result-actions">
+              <button 
+                class="btn-secondary btn-small" 
+                (click)="verDatos = !verDatos"
+              >
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                </svg>
+                {{ verDatos ? 'Ocultar datos' : 'Ver datos completos' }}
+              </button>
+            </div>
+
+            <!-- Data Display -->
+            @if (verDatos) {
+              <div class="data-display">
+                <div class="data-header">
+                  <span class="data-label">Respuesta API</span>
+                  <button class="btn-copy" title="Copiar JSON">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
+                      <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
+                    </svg>
+                  </button>
+                </div>
+                <pre class="data-content">{{ apiResult.data | json }}</pre>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Error State -->
+        @if (apiResult.state == State.Fail) {
+          <div class="result-error">
+            <div class="result-header">
+              <div class="result-icon error">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="result-info">
+                <h4 class="result-title">Error en la consulta</h4>
+                <p class="result-status error">{{ apiResult.data }}</p>
+              </div>
+            </div>
+            
+            <div class="error-help">
+              <p class="error-help-title">Posibles soluciones:</p>
+              <ul class="error-help-list">
+                <li>Verifica que la fecha tenga el formato correcto (YYYYMMDD)</li>
+                <li>Comprueba que la fecha corresponda a un día con publicación BOE</li>
+                <li>Intenta con la fecha de hoy: <strong>{{ getToday() }}</strong></li>
+              </ul>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

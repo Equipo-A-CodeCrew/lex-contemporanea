@@ -1,0 +1,58 @@
+<!-- Main App Layout -->
+<div class="app-wrapper">
+    <app-header (onClick)="onHelpClick()"></app-header>
+
+  <!-- Main Content -->
+  <main class="app-main">
+    <div class="container-wide">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-content">
+          <span class="hero-badge">Beta</span>
+          <h2 class="hero-title">Consulta normativa en tiempo real</h2>
+          <p class="hero-description">
+            Accede al sumario diario del BOE de forma clara y estructurada. 
+            Diseñado para opositores, estudiantes y profesionales del derecho.
+          </p>
+        </div>
+        
+        <div class="hero-stats">
+          <div class="stat-card">
+            <span class="stat-value">248</span>
+            <span class="stat-label">Normas hoy</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">15</span>
+            <span class="stat-label">En vigor hoy</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">3</span>
+            <span class="stat-label">Ministerios activos</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Content Area -->
+      <div class="content-grid">
+        <router-outlet></router-outlet>
+        <app-response-test></app-response-test>
+          <app-search></app-search>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container">
+      <div class="footer-content">
+        <p class="footer-text">
+          Datos oficiales de <a href="https://www.boe.es" target="_blank" rel="noopener">BOE.es</a>
+        </p>
+        <p class="footer-legal">
+          Equipo A
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</div>

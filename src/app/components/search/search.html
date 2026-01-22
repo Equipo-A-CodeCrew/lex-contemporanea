@@ -1,0 +1,160 @@
+<div class="search-container">
+    <h2>Busqueda de normas</h2>
+    <!-- Formulario de búsqueda -->
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" formControlName="fecha" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="keyword">Palabra clave:</label>
+                <input type="text" id="keyword" formControlName="keyword"
+                    placeholder="Ej: función pública, educación..." class="form-control">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="tipoNorma">Tipo de norma:</label>
+                <select id="tipoNorma" formControlName="tipoNorma" class="form-control">
+                    <option value="">Todos los tipos</option>
+                    <option value="Ley">Ley</option>
+                    <option value="Real Decreto">Real Decreto</option>
+                    <option value="Orden Ministerial">Orden Ministerial</option>
+                    <option value="Resolución">Resolución</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="ministerio">Ministerio:</label>
+                <select id="ministerio" formControlName="ministerio" class="form-control">
+                    <option value="">Todos los ministerios</option>
+                    <option value="Ministerio de Hacienda">Hacienda</option>
+                    <option value="Ministerio de Educación">Educación</option>
+                    <option value="Ministerio de Sanidad">Sanidad</option>
+                    <option value="Ministerio de Justicia">Justicia</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+
+            @if (loading) {
+            Buscando...
+            } @else {
+            Buscar
+            }
+        </button>
+    </form>
+
+    <!-- Filtros activos -->
+    @if (activeFilters.length > 0) {
+    <div class="active-filters">
+        <h4>Filtros activos:</h4>
+        <div class="filter-chips">
+            @for (filter of activeFilters; track filter.id; let i = $index) {
+            <div class="filter-chip">
+                @if (filter.icon) {
+                <span class="material-icons">{{ filter.icon }}</span>
+                }
+                {{ filter.label }}
+                <button type="button" (click)="removeActiveFilter(i)" class="btn-close">
+                    &times;
+                </button>
+            </div>
+            }
+            <button type="button" (click)="clearAllFilters()" class="btn-clear">
+                Limpiar todos
+            </button>
+        </div>
+    </div>
+    }
+
+    <!-- Filtros predefinidos -->
+    <div class="preset-filters">
+        <h3>Búsquedas rápidas:</h3>
+        <div class="filter-groups">
+            @for (group of groupedFilters; track group.title) {
+            <div class="filter-group">
+                <h4>{{ group.title }}</h4>
+                <div class="filter-buttons">
+                    @for (filter of group.filters; track filter.id) {
+                    <button type="button" class="filter-btn" [class.active]="isFilterActive(filter.id)"
+                        (click)="onPresetFilterSelected(filter)">
+                        @if (filter.icon) {
+                        <span class="material-icons">{{ filter.icon }}</span>
+                        }
+                        {{ filter.label }}
+                    </button>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Resultados -->
+    @if (rawBoeResponse) {
+    <div class="debug-json">
+        <h3>Respuesta cruda del BOE</h3>
+        <pre>{{ rawBoeResponse | json }}</pre>
+    </div>
+    }
+
+    @if (results) {
+    <div class="results">
+        <h3>Resultados ({{ results.total }}):</h3>
+
+        @if (results.total === 0) {
+        <div class="no-results">
+            No se encontraron resultados para tu búsqueda.
+        </div>
+        }
+
+        @if (results.total > 0) {
+        <div class="result-items">
+            @for (item of results.items; track item.id) {
+            <div class="result-item">
+                <div class="item-header">
+                    <span class="item-type">{{ item.tipo }}</span>
+                    <span class="item-date">
+                        {{ item.fechaPublicacion | date:'dd/MM/yyyy' }}
+                    </span>
+                </div>
+
+                <h4 class="item-title">{{ item.titulo }}</h4>
+
+                <div class="item-details">
+                    <span class="item-department">
+                        <span class="material-icons">account_balance</span>
+                        {{ item.departamento }}
+                    </span>
+
+                    <span class="item-section">
+                        <span class="material-icons">list</span>
+                        Sección {{ item.seccion }}
+                    </span>
+                </div>
+
+                <div class="item-actions">
+                    @if (item.enlaces.pdf) {
+                    <a [href]="item.enlaces.pdf" target="_blank" class="btn-link">
+                        <span class="material-icons">picture_as_pdf</span> PDF
+                    </a>
+                    }
+
+                    @if (item.enlaces.html) {
+                    <a [href]="item.enlaces.html" target="_blank" class="btn-link">
+                        <span class="material-icons">article</span> HTML
+                    </a>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </div>
+    }
+</div>
