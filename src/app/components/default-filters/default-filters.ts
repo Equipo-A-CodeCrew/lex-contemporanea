@@ -28,13 +28,23 @@ export class DefaultFilters {
     });
   }
 
+  // prueba
   showEpigraphs(): void {
     if (!this.sumario) return;
     this.filtersService.extractEpigraphs(this.sumario);
   }
 
+  // prueba
   showItems() {
     if (!this.sumario) return;
     this.filtersService.extractItems(this.sumario);
+  }
+
+  //Prueba
+  applyTypeLawFilter() {
+    if (!this.sumario) return;
+
+    const laws = this.filtersService.filterByLawType(this.sumario, 'Decreto');
+    console.log('Filtered laws:', laws);
   }
 }

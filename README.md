@@ -86,3 +86,67 @@ hacia la integración de la legislación consolidada como siguiente paso natural
 
 
 - **statisticsService**: obtención de estadísticas relacionadas con el sumario
+
+## Tipos de norma (TODOS):
+
+Ley
+
+Real Decreto
+
+Orden
+
+Resolución
+
+Acuerdo
+
+Circular
+
+Instrucción
+
+Decreto
+
+Reglamento
+
+Corrección de errores
+
+Convocatoria
+
+Anuncio
+
+Extracto
+
+Acuerdo de Consejo de Ministros
+
+Acuerdo del Consejo de Estado
+
+Acuerdo del Congreso / Senado
+
+Orden Ministerial
+
+Orden de la Comunidad Autónoma (cuando aplica)
+
+Proposición de Ley (menos común en BOE sumario)
+
+Proyecto de Ley (cuando aparece)
+
+## Tipos de norma:
+
+Ley
+
+Real Decreto
+
+Decreto
+
+Reglamento
+
+Orden
+
+Instrucción
+
+Resolución
+
+Circular
+
+Acuerdo
+
+Orden Ministerial
