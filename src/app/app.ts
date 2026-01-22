@@ -2,10 +2,9 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { ResponseTest } from './components/response-test/response-test';
-import {Header} from "./components/header/header";
-import {Alert} from "./components/alert/alert";
-import {SearchFiltersComponent} from "./components/search-filters.component";
-import {SearchComponent} from "./components/search/search";
+import { Header } from "./components/header/header";
+import { Alert } from "./components/alert/alert";
+import { DefaultFilters } from './components/default-filters/default-filters';
 
 @Component({
   selector: 'app-root',
@@ -14,8 +13,7 @@ import {SearchComponent} from "./components/search/search";
     ResponseTest,
     Header,
     Alert,
-    SearchFiltersComponent,
-    SearchComponent,
+    DefaultFilters,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
