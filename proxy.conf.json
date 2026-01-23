@@ -1,0 +1,8 @@
+{
+  "/boe-api": {
+    "target": "https://www.boe.es",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
