@@ -23,6 +23,19 @@
     </select>
 
     <button (click)="applyTypeLawFilter()">
-        Aplicar filtro
+        Búsqueda por tipo de norma
     </button>
+</div>
+
+<!-- contenedor provisional de selección de ministerio/órgano -->
+<div>
+    <label for="ministry">Ministerio:</label>
+
+    <select id="ministry" [(ngModel)]="selectedMinistry" name="ministry">
+        <option value="">-- Selecciona --</option>
+        <option *ngFor="let m of ministries" [value]="m">
+            {{ m }}
+        </option>
+    </select>
+    <button (click)="applyMinistryFilter()">Aplicar filtro por ministerio</button>
 </div>

@@ -26,13 +26,18 @@ export class DefaultFiltersService {
 
         if (!Array.isArray(epigraphList)) return;
 
+        // hay que refactorizar esto: desmasiado nesting
         epigraphList.forEach((epigraph: any) => {
 
           const item = epigraph?.item ?? epigraph?.Item;
 
           if (Array.isArray(item)) {
-            items.push(...item);
+            item.forEach((i: any) => {
+              i.ministerio = department.nombre;
+              items.push(i);
+            });
           } else if (item) {
+            item.ministerio = department.nombre;
             items.push(item);
           }
 
@@ -42,10 +47,10 @@ export class DefaultFiltersService {
 
     });
 
-    console.log('Items:', items);
+    console.log('Items with ministry:', items);
+    // console.log('Items:', items);
     return items;
   }
-
 
   extractEpigraphs(summary: any): any[] {
 
@@ -94,7 +99,6 @@ export class DefaultFiltersService {
     return titles;
   }
 
-
   // filtrar por tipo de norma - filterByLawType
   filterByLawType(summary: any, type: string): any[] {
     const items = this.extractItems(summary);
@@ -118,18 +122,65 @@ export class DefaultFiltersService {
       return [];
     }
 
+    const normalize = (value: string) =>
+      value
+        .toLowerCase()
+        .normalize('NFD')
+        .replaceAll(/[\u0300-\u036f]/g, '');
+
+    const normalizedType = normalize(type);
+
     return items.filter((item: any) => {
       const title = item?.titulo as string;
       if (!title) return false;
 
-      const firstTwoWords = title.split(' ').slice(0, 2).join(' ');
-      const firstWord = title.split(' ')[0];
+      const normalizedTitle = normalize(title);
 
-      return firstTwoWords === type || firstWord === type;
+      // Excepción para Real Decreto-Ley
+      if (
+        normalizedType === 'real decreto' &&
+        normalizedTitle.startsWith('real decreto-ley')
+      ) {
+        return true;
+      }
+
+      return normalizedTitle.startsWith(normalizedType + ' ')
+        || normalizedTitle === normalizedType;
     });
   }
 
-  // filtrar por órgano/ministerio
+  // obtener órgano/ministerio únicos: 
+  // sirve para enumerarlos en el select
+  filterByMinistries(summary: any): string[] {
+    const items = this.extractItems(summary);
+
+    const ministries = items
+      .map((item: any) => item?.ministerio)
+      .filter((m: string | undefined) => !!m)
+      .map(m => m!.trim()) // normaliza espacios
+
+    const uniqueMinistries = Array.from(new Set(ministries));
+
+    console.log('Ministries (unique):', uniqueMinistries);
+
+    return uniqueMinistries;
+  }
+
+  // fitrar por ministerio
+  filterByMinistry(summary: any, ministry: string): any[] {
+    const items = this.extractItems(summary);
+
+    if (!ministry?.trim()) {
+      return items;
+    }
+
+    const normalized = ministry.trim().toLowerCase();
+
+    return items.filter((item: any) => {
+      const m = item?.ministerio;
+      return m && m.trim().toLowerCase() === normalized;
+    });
+  }
 
   // filtrar por rango de fecha (datepipe)
 
