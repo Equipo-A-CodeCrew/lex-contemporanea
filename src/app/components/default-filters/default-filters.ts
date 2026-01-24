@@ -1,28 +1,31 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { DefaultFiltersService } from '../../services/default-filters-service';
 import { BoeService } from '../../services/boe-service';
 
 @Component({
   selector: 'app-default-filters',
-  imports: [],
+  imports: [
+    FormsModule
+  ],
   templateUrl: './default-filters.html',
   styleUrl: './default-filters.scss',
 })
 export class DefaultFilters {
 
   sumario: any;
+  selectedLawType = '';
 
   constructor(
     private readonly boeService: BoeService,
     private readonly filtersService: DefaultFiltersService
   ) { }
 
-  // Código temporalmente comentado para mayor comodidad
+  // BUSCAR PROBLEMAS
   // ngOnInit(): void {
   //   const today = new Date();
   //   const date = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
-
   //   this.boeService.getSumario(date).subscribe(data => {
   //     console.log('SUMARIO RAW', data);
   //     this.sumario = data;
@@ -50,11 +53,15 @@ export class DefaultFilters {
     this.filtersService.extractItems(this.sumario);
   }
 
-  //Prueba
+  // Función para aplicar el filtro de tipo de norma
   applyTypeLawFilter() {
-    if (!this.sumario) return;
+    if (!this.sumario || !this.selectedLawType) return;
 
-    const laws = this.filtersService.filterByLawType(this.sumario, 'Decreto');
+    const laws = this.filtersService.filterByLawType(
+      this.sumario,
+      this.selectedLawType
+    );
+
     console.log('Filtered laws:', laws);
   }
 }

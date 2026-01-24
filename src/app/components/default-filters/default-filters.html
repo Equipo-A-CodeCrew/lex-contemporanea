@@ -1,3 +1,28 @@
+<!-- botones de prueba de salida de datos -->
+
 <!-- <button type="button" (click)="showEpigraphs()">Muestra los epígrafes</button> -->
 <!-- <button type="button" (click)="showItems()">Muestra los items</button> -->
-<button type="button" (click)="applyTypeLawFilter()">Muestra las leyes</button>
+
+<!-- contenedor provisional de selección de tipo de norma -->
+<div>
+    <label for="lawType">Tipo de norma:</label>
+
+    <select id="lawType" [(ngModel)]="selectedLawType" name="lawType">
+        <option value="">-- Selecciona --</option>
+        <option>Ley</option>
+        <option>Real Decreto</option>
+        <option>Decreto</option>
+        <option>Reglamento</option>
+        <option>Orden</option>
+        <option>Resolución</option>
+        <option>Instrucción</option>
+        <option>Circular</option>
+        <option>Acuerdo</option>
+        <option>Texto Refundido</option>
+        <option>Corrección de errores</option>
+    </select>
+
+    <button (click)="applyTypeLawFilter()">
+        Aplicar filtro
+    </button>
+</div>
