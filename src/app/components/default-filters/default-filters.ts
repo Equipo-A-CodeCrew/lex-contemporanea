@@ -21,6 +21,7 @@ export class DefaultFilters {
   // filteredItems: any[] = [];
   filteredResults: any[] = [];
 
+
   // relacionado con el filtro de tipo de norma
   selectedLawType = '';
 
@@ -57,6 +58,7 @@ export class DefaultFilters {
       // console.log('SUMARIO RAW', data);
       // console.log('Ministries loaded:', this.ministries);
     });
+
   }
 
   // Función para aplicar el filtro de tipo de norma
@@ -69,6 +71,12 @@ export class DefaultFilters {
     );
   }
 
+  // Función para limpiar el filtro de tipo de norma
+  clearLawTypeFilter() {
+    this.selectedLawType = '';
+    this.applyAllFilters();
+  }
+
   // Función para aplicar el filtro de ministerio
   applyMinistryFilter() {
     if (!this.sumario || !this.selectedMinistry) return;
@@ -77,6 +85,12 @@ export class DefaultFilters {
       this.sumario,
       this.selectedMinistry
     );
+  }
+
+  // Función para limpiar el filtro de ministerio
+  clearMinistryFilter() {
+    this.selectedMinistry = '';
+    this.applyAllFilters();
   }
 
   // Función para cargar el sumario por fecha
@@ -103,5 +117,12 @@ export class DefaultFilters {
       this.selectedMinistry,
       this.selectedLawType
     );
+  }
+
+  // Función para limpiar todos los filtros
+  clearAllFilters() {
+    this.selectedLawType = '';
+    this.selectedMinistry = '';
+    this.filteredResults = [];
   }
 }

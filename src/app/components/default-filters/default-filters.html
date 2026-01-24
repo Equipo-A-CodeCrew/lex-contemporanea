@@ -17,9 +17,7 @@
         <option>Corrección de errores</option>
     </select>
 
-    <button (click)="applyTypeLawFilter()">
-        Búsqueda por tipo de norma
-    </button>
+    <button (click)="clearLawTypeFilter()">Eliminar filtro por norma</button>
 </div>
 
 <!-- contenedor provisional de selección de ministerio/órgano -->
@@ -32,16 +30,20 @@
             {{ m }}
         </option>
     </select>
-    <button (click)="applyMinistryFilter()">Aplicar filtro por ministerio</button>
+    <button (click)="clearMinistryFilter()">Eliminar filtro por ministerio</button>
 </div>
 
 <!-- contenedor provisional de selección de rango de tiempo -->
 <label for="date">Fecha:</label>
 <input id="date" type="date" [(ngModel)]="selectedDate" (change)="loadSummaryByDate()">
-<button (click)="loadSummaryByDate()">Cargar sumario</button>
 
 <div>
     <h3>Resultados</h3>
+    <span *ngIf="filteredResults.length > 0">
+        ({{ filteredResults.length }})
+    </span>
+
+    <button (click)="clearAllFilters()">Eliminar todos los filtros</button>
 
     <div *ngIf="filteredResults.length === 0">
         No hay resultados.
