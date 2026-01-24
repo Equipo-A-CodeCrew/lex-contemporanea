@@ -19,12 +19,15 @@ export class DefaultFilters {
 
   sumario: any;
 
-  // relacioando co el filtro de tipo de norma
+  // relacionado con el filtro de tipo de norma
   selectedLawType = '';
 
-  // relacioando co el filtro de ministerio
+  // relacionado con el filtro de ministerio
   ministries: string[] = [];
   selectedMinistry = '';
+
+  // relacionado con el filtro por fecha
+  selectedDate = '';
 
   constructor(
     private readonly boeService: BoeService,
@@ -84,6 +87,36 @@ export class DefaultFilters {
 
     const filtered = this.filtersService.filterByMinistry(this.sumario, this.selectedMinistry);
     console.log('Filtered by ministry:', filtered);
+  }
+
+  // Función para cargar el sumario por fecha
+  loadSummaryByDate() {
+    if (!this.selectedDate) return;
+
+    const formattedDate = this.selectedDate.replaceAll('-', '');
+    console.log('Fecha formateada:', formattedDate);
+
+    this.boeService.getSumario(formattedDate).subscribe(data => {
+      console.log('SUMARIO RAW', data);
+      this.sumario = data;
+
+      this.ministries = this.filtersService.filterByMinistries(this.sumario);
+      console.log('Ministries loaded:', this.ministries);
+
+      console.log('Sumario cargado:', this.sumario?.data?.sumario?.metadatos?.fecha_publicacion);
+
+      this.selectedMinistry = '';
+      this.selectedLawType = '';
+
+      if (this.selectedMinistry) {
+        this.applyMinistryFilter();
+      }
+
+      if (this.selectedLawType) {
+        this.applyTypeLawFilter();
+      }
+    });
+
   }
 
 }
