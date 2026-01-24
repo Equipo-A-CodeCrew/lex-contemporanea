@@ -1,13 +1,8 @@
-<!-- botones de prueba de salida de datos -->
-
-<!-- <button type="button" (click)="showEpigraphs()">Muestra los epígrafes</button> -->
-<!-- <button type="button" (click)="showItems()">Muestra los items</button> -->
-
 <!-- contenedor provisional de selección de tipo de norma -->
 <div>
     <label for="lawType">Tipo de norma:</label>
 
-    <select id="lawType" name="lawType" [(ngModel)]="selectedLawType" (change)="applyTypeLawFilter()">
+    <select id="lawType" name="lawType" [(ngModel)]="selectedLawType" (change)="applyAllFilters()">
         <option value="">-- Selecciona --</option>
         <option>Ley</option>
         <option>Real Decreto</option>
@@ -31,7 +26,7 @@
 <div>
     <label for="ministry">Ministerio:</label>
 
-    <select id="ministry" name="ministry" [(ngModel)]="selectedMinistry" (change)="applyMinistryFilter()">
+    <select id="ministry" name="ministry" [(ngModel)]="selectedMinistry" (change)="applyAllFilters()">
         <option value="">-- Selecciona --</option>
         <option *ngFor="let m of ministries" [value]="m">
             {{ m }}
@@ -44,3 +39,17 @@
 <label for="date">Fecha:</label>
 <input id="date" type="date" [(ngModel)]="selectedDate" (change)="loadSummaryByDate()">
 <button (click)="loadSummaryByDate()">Cargar sumario</button>
+
+<div>
+    <h3>Resultados</h3>
+
+    <div *ngIf="filteredResults.length === 0">
+        No hay resultados.
+    </div>
+
+    <ul *ngIf="filteredResults.length > 0">
+        <li *ngFor="let item of filteredResults">
+            {{ item.titulo }}
+        </li>
+    </ul>
+</div>

@@ -186,5 +186,37 @@ export class DefaultFiltersService {
 
   // filtrar por disposición
 
+  // Filtro por número de control / identificador
+
   // ? filtrar por estado de norma
+
+  // filtrar todos
+  applyAllFilters(summary: any, ministry?: string, lawType?: string): any[] {
+    console.log('applyAllFilters - summary:', summary);
+
+    const items = this.extractItems(summary);
+    console.log('applyAllFilters - items extracted:', items.length);
+
+    let filtered = items;
+    if (ministry) {
+      filtered = filtered.filter((item: any) => item?.ministerio === ministry);
+      console.log('applyAllFilters - after ministry filter:', filtered.length);
+    } // if.end
+
+    if (lawType) {
+      filtered = filtered.filter((item: any) => {
+        const title = item?.titulo as string;
+        if (!title) return false;
+
+        const firstTwoWords = title.split(' ').slice(0, 2).join(' ');
+        const firstWord = title.split(' ')[0];
+
+        return firstTwoWords === lawType || firstWord === lawType;
+      });
+      console.log('applyAllFilters - after lawType filter:', filtered.length);
+    } // if.end
+
+    return filtered;
+  } // applyAllFilters.end
+
 }

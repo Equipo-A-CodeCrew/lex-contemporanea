@@ -18,6 +18,8 @@ import { BoeService } from '../../services/boe-service';
 export class DefaultFilters {
 
   sumario: any;
+  // filteredItems: any[] = [];
+  filteredResults: any[] = [];
 
   // relacionado con el filtro de tipo de norma
   selectedLawType = '';
@@ -45,48 +47,36 @@ export class DefaultFilters {
   // }
 
   ngOnInit(): void {
-    const date = '20260115'; // fecha provisional
+    const today = new Date();
+    const date = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
 
     this.boeService.getSumario(date).subscribe(data => {
-      // console.log('SUMARIO RAW', data);
       this.sumario = data;
-
       this.ministries = this.filtersService.filterByMinistries(this.sumario);
-      console.log('Ministries loaded:', this.ministries);
+
+      // console.log('SUMARIO RAW', data);
+      // console.log('Ministries loaded:', this.ministries);
     });
-
-  }
-
-  // prueba
-  showEpigraphs(): void {
-    if (!this.sumario) return;
-    this.filtersService.extractEpigraphs(this.sumario);
-  }
-
-  // prueba
-  showItems() {
-    if (!this.sumario) return;
-    this.filtersService.extractItems(this.sumario);
   }
 
   // Función para aplicar el filtro de tipo de norma
   applyTypeLawFilter() {
     if (!this.sumario || !this.selectedLawType) return;
 
-    const laws = this.filtersService.filterByLawType(
+    this.filteredResults = this.filtersService.filterByLawType(
       this.sumario,
       this.selectedLawType
     );
-
-    console.log('Filtered laws:', laws);
   }
 
   // Función para aplicar el filtro de ministerio
   applyMinistryFilter() {
-    if (!this.sumario) return;
+    if (!this.sumario || !this.selectedMinistry) return;
 
-    const filtered = this.filtersService.filterByMinistry(this.sumario, this.selectedMinistry);
-    console.log('Filtered by ministry:', filtered);
+    this.filteredResults = this.filtersService.filterByMinistry(
+      this.sumario,
+      this.selectedMinistry
+    );
   }
 
   // Función para cargar el sumario por fecha
@@ -94,29 +84,24 @@ export class DefaultFilters {
     if (!this.selectedDate) return;
 
     const formattedDate = this.selectedDate.replaceAll('-', '');
-    console.log('Fecha formateada:', formattedDate);
 
     this.boeService.getSumario(formattedDate).subscribe(data => {
-      console.log('SUMARIO RAW', data);
       this.sumario = data;
 
       this.ministries = this.filtersService.filterByMinistries(this.sumario);
-      console.log('Ministries loaded:', this.ministries);
 
-      console.log('Sumario cargado:', this.sumario?.data?.sumario?.metadatos?.fecha_publicacion);
-
-      this.selectedMinistry = '';
-      this.selectedLawType = '';
-
-      if (this.selectedMinistry) {
-        this.applyMinistryFilter();
-      }
-
-      if (this.selectedLawType) {
-        this.applyTypeLawFilter();
-      }
+      this.applyAllFilters();
     });
-
   }
 
+  // Función para aplicar todos los filtros
+  applyAllFilters() {
+    if (!this.sumario) return;
+
+    this.filteredResults = this.filtersService.applyAllFilters(
+      this.sumario,
+      this.selectedMinistry,
+      this.selectedLawType
+    );
+  }
 }
