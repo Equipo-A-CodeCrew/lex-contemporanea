@@ -52,11 +52,11 @@ hacia la integración de la legislación consolidada como siguiente paso natural
 ## Componentes
 
 
-- **responseTestComponent**: componente básico para las pruebas del endpoint
+- **ResponseTest** : componente básico para las pruebas del endpoint
 
+- **DefaultFilters** : carga los filtros predefinidos
 
 ## Modelos
-
 
 - **BOE**: modelo para la información legislativa obtenida del BOE
 
@@ -67,86 +67,11 @@ hacia la integración de la legislación consolidada como siguiente paso natural
 - **LawType**: en caso de agruparlas por tipos (Ley Orgánica, Decreto, Orden) con su propia lógica
 
 
-## Servicios (son orientativos)
+## Servicios
 
 
-- **dateQueryService**: consulta por fecha de publicación y entrada en vigor
+- **boe-service** : obtiene el sumario de la fecha programada
 
+- **extract-data-service** : se encarga de obtener los datos de los items de la respuesta a la API
 
-- **getSumaryService**: obtención del sumario diario completo
-
-
-- **presetFiltersService**: filtros predefinidos para búsquedas (pueden aparecer en píldoras por ejemplo). Creo que, de momento, si no hace falta para ningún filtro o cosa curiosa; creo que es mejor no complicarse. De todas formas, a veces sin quererlo, el contexto lo requiere
-
-
-- **customizedSearchService**: búsqueda por palabra clave, ministerio o tipo de norma
-
-
-- **itemSearchService**: obtención de un ítem específico del sumario
-
-
-- **statisticsService**: obtención de estadísticas relacionadas con el sumario
-
-## Tipos de norma (TODOS):
-
-Ley
-
-Real Decreto
-
-Orden
-
-Resolución
-
-Acuerdo
-
-Circular
-
-Instrucción
-
-Decreto
-
-Reglamento
-
-Corrección de errores
-
-Convocatoria
-
-Anuncio
-
-Extracto
-
-Acuerdo de Consejo de Ministros
-
-Acuerdo del Consejo de Estado
-
-Acuerdo del Congreso / Senado
-
-Orden Ministerial
-
-Orden de la Comunidad Autónoma (cuando aplica)
-
-Proposición de Ley (menos común en BOE sumario)
-
-Proyecto de Ley (cuando aparece)
-
-## Tipos de norma:
-
-Ley
-
-Real Decreto
-
-Decreto
-
-Reglamento
-
-Orden
-
-Instrucción
-
-Resolución
-
-Circular
-
-Acuerdo
-
-Orden Ministerial
+- **default-filters-service** : se encarga de aplicar los filtros que son más sencillos y requieren de menos validaciones o normalizaciones
