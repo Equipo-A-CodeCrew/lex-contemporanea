@@ -3,124 +3,11 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
+
 export class DefaultFiltersService {
-
-  extractItems(summary: any): any[] {
-    const items: any[] = [];
-
-    const daily = summary?.data?.sumario?.diario?.[0];
-    if (!daily?.seccion) return items;
-
-    daily.seccion.forEach((section: any) => {
-
-      const departments = Array.isArray(section.departamento)
-        ? section.departamento
-        : [section.departamento];
-
-      departments.forEach((department: any) => {
-
-        const epigraphsFromText = department?.texto?.epigrafe;
-        const epigraphsDirect = department?.epigrafe;
-
-        const epigraphList = epigraphsFromText ?? epigraphsDirect;
-
-        if (!Array.isArray(epigraphList)) return;
-
-        // hay que refactorizar esto: desmasiado nesting
-        epigraphList.forEach((epigraph: any) => {
-
-          const item = epigraph?.item ?? epigraph?.Item;
-
-          if (Array.isArray(item)) {
-            item.forEach((i: any) => {
-              i.ministerio = department.nombre;
-              items.push(i);
-            });
-          } else if (item) {
-            item.ministerio = department.nombre;
-            items.push(item);
-          }
-
-        });
-
-      });
-
-    });
-
-    console.log('Items with ministry:', items);
-    // console.log('Items:', items);
-    return items;
-  }
-
-  extractEpigraphs(summary: any): any[] {
-
-    const epigraphs: any[] = [];
-
-    const daily = summary?.data?.sumario?.diario?.[0];
-    if (!daily?.seccion) return epigraphs;
-
-    daily.seccion.forEach((section: any) => {
-
-      const departments = Array.isArray(section.departamento)
-        ? section.departamento
-        : [section.departamento];
-
-      departments.forEach((department: any) => {
-
-        // Caso A: department.texto.epigrafe
-        const epigraphsFromText = department?.texto?.epigrafe;
-        if (Array.isArray(epigraphsFromText)) {
-          epigraphs.push(...epigraphsFromText);
-        }
-
-        // Caso B: department.epigrafe
-        const epigraphsDirect = department?.epigrafe;
-        if (Array.isArray(epigraphsDirect)) {
-          epigraphs.push(...epigraphsDirect);
-        }
-
-      });
-
-    });
-
-    console.log('Epigraphs:', epigraphs);
-    return epigraphs;
-  }
-
-  extractTitles(summary: any): string[] {
-    const items = this.extractItems(summary);
-    const titles: string[] = [];
-
-    items.forEach((item: any) => {
-      if (item?.titulo) titles.push(item.titulo);
-    });
-
-    console.log('Titles:', titles);
-    return titles;
-  }
-
   // filtrar por tipo de norma - filterByLawType
-  filterByLawType(summary: any, type: string): any[] {
-    const items = this.extractItems(summary);
-
-    const validPrefixes = [
-      'Ley',
-      'Real Decreto',
-      'Decreto',
-      'Reglamento',
-      'Orden',
-      'Resolución',
-      'Instrucción',
-      'Circular',
-      'Acuerdo',
-      'Texto Refundido',
-      'Corrección de errores'
-    ];
-
-    if (!validPrefixes.includes(type)) {
-      console.warn('Invalid law type:', type);
-      return [];
-    }
+  filterByLawType(items: any[], type: string): any[] {
+    if (!type) return items;
 
     const normalize = (value: string) =>
       value
@@ -130,13 +17,13 @@ export class DefaultFiltersService {
 
     const normalizedType = normalize(type);
 
-    return items.filter((item: any) => {
-      const title = item?.titulo as string;
+    return items.filter(item => {
+      const title = item?.titulo;
       if (!title) return false;
 
       const normalizedTitle = normalize(title);
 
-      // Excepción para Real Decreto-Ley
+      // excepción Real Decreto-Ley
       if (
         normalizedType === 'real decreto' &&
         normalizedTitle.startsWith('real decreto-ley')
@@ -144,79 +31,51 @@ export class DefaultFiltersService {
         return true;
       }
 
-      return normalizedTitle.startsWith(normalizedType + ' ')
-        || normalizedTitle === normalizedType;
+      return (
+        normalizedTitle.startsWith(normalizedType + ' ') ||
+        normalizedTitle === normalizedType
+      );
     });
   }
 
   // obtener órgano/ministerio únicos: 
   // sirve para enumerarlos en el select
-  filterByMinistries(summary: any): string[] {
-    const items = this.extractItems(summary);
-
+  filterByMinistries(items: any[]): string[] {
     const ministries = items
-      .map((item: any) => item?.ministerio)
-      .filter((m: string | undefined) => !!m)
-      .map(m => m!.trim()) // normaliza espacios
+      .map(item => item?.ministerio)
+      .filter(Boolean)
+      .map(m => m.trim());
 
-    const uniqueMinistries = Array.from(new Set(ministries));
-
-    console.log('Ministries (unique):', uniqueMinistries);
-
-    return uniqueMinistries;
+    return Array.from(new Set(ministries));
   }
 
   // fitrar por ministerio
-  filterByMinistry(summary: any, ministry: string): any[] {
-    const items = this.extractItems(summary);
-
-    if (!ministry?.trim()) {
-      return items;
-    }
+  filterByMinistry(items: any[], ministry: string): any[] {
+    if (!ministry) return items;
 
     const normalized = ministry.trim().toLowerCase();
 
-    return items.filter((item: any) => {
-      const m = item?.ministerio;
-      return m && m.trim().toLowerCase() === normalized;
-    });
+    return items.filter(item =>
+      item?.ministerio?.trim().toLowerCase() === normalized
+    );
   }
 
-  // filtrar por rango de fecha (datepipe)
-
-  // filtrar por disposición
-
-  // Filtro por número de control / identificador
-
-  // ? filtrar por estado de norma
-
   // filtrar todos
-  applyAllFilters(summary: any, ministry?: string, lawType?: string): any[] {
-    console.log('applyAllFilters - summary:', summary);
-
-    const items = this.extractItems(summary);
-    console.log('applyAllFilters - items extracted:', items.length);
-
+  applyAllFilters(
+    items: any[],
+    ministry?: string,
+    lawType?: string
+  ): any[] {
     let filtered = items;
+
     if (ministry) {
-      filtered = filtered.filter((item: any) => item?.ministerio === ministry);
-      console.log('applyAllFilters - after ministry filter:', filtered.length);
-    } // if.end
+      filtered = this.filterByMinistry(filtered, ministry);
+    }
 
     if (lawType) {
-      filtered = filtered.filter((item: any) => {
-        const title = item?.titulo as string;
-        if (!title) return false;
-
-        const firstTwoWords = title.split(' ').slice(0, 2).join(' ');
-        const firstWord = title.split(' ')[0];
-
-        return firstTwoWords === lawType || firstWord === lawType;
-      });
-      console.log('applyAllFilters - after lawType filter:', filtered.length);
-    } // if.end
+      filtered = this.filterByLawType(filtered, lawType);
+    }
 
     return filtered;
-  } // applyAllFilters.end
-
+  }
 }

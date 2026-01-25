@@ -39,9 +39,10 @@
 
 <div>
     <h3>Resultados</h3>
-    <span *ngIf="filteredResults.length > 0">
-        ({{ filteredResults.length }})
-    </span>
+    
+    @if (filteredResults.length > 0) {
+    <span>({{ filteredResults.length }})</span>
+    }
 
     <button (click)="clearAllFilters()">Eliminar todos los filtros</button>
 
